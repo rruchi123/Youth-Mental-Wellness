@@ -31,6 +31,7 @@ import {
 import { format } from "date-fns";
 import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import API_BASE_URL from "@/api";
 
 const timeSlots = [
   "09:00 AM",
@@ -77,7 +78,7 @@ export default function Experts() {
     setError("");
 
     try {
-      const response = await fetch("http://localhost:5000/api/experts");
+      const response = await fetch("${API_BASE_URL}/experts");
       const data = await response.json();
 
       if (!response.ok) {
@@ -132,7 +133,7 @@ export default function Experts() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/experts/bookings",
+        "${API_BASE_URL}/experts/bookings",
         {
           method: "POST",
           headers: {

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Lock, Eye, EyeOff, ArrowLeft } from "lucide-react";
+import API_BASE_URL from "@/api";
 
 export default function ResetPassword() {
   const navigate = useNavigate();
@@ -51,7 +52,7 @@ export default function ResetPassword() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/auth/reset-password",
+        "${API_BASE_URL}/auth/reset-password",
         {
           method: "POST",
           headers: {
@@ -109,11 +110,10 @@ export default function ResetPassword() {
 
         {message && (
           <div
-            className={`mt-5 rounded-lg px-4 py-3 text-sm ${
-              isError
+            className={`mt-5 rounded-lg px-4 py-3 text-sm ${isError
                 ? "bg-red-50 text-red-600 border border-red-200"
                 : "bg-green-50 text-green-700 border border-green-200"
-            }`}
+              }`}
           >
             {message}
           </div>

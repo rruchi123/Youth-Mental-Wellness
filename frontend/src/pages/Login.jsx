@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
+import API_BASE_URL from "@/api";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
+      const response = await fetch("${API_BASE_URL}/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -78,11 +79,10 @@ export default function Login() {
 
         {message && (
           <div
-            className={`mt-5 rounded-lg px-4 py-3 text-sm ${
-              isError
+            className={`mt-5 rounded-lg px-4 py-3 text-sm ${isError
                 ? "bg-red-50 text-red-600 border border-red-200"
                 : "bg-green-50 text-green-700 border border-green-200"
-            }`}
+              }`}
           >
             {message}
           </div>
@@ -135,12 +135,12 @@ export default function Login() {
             </label>
 
             <Link
-  to="/ForgotPassword"
-  className="text-teal-600 hover:underline text-sm"
->
-  Forgot Password?
-</Link>
-</div>
+              to="/ForgotPassword"
+              className="text-teal-600 hover:underline text-sm"
+            >
+              Forgot Password?
+            </Link>
+          </div>
 
           <button
             type="submit"

@@ -10,6 +10,7 @@ import {
   Alert,
   AlertDescription,
 } from "@/components/ui/alert";
+import API_BASE_URL from "@/api";
 
 const SYSTEM_PROMPT = `You are a gentle, empathetic AI companion for young people's mental wellness. Your role is to:
 
@@ -56,72 +57,72 @@ export default function Chat() {
 
   const detectCrisis = (text) => {
     const crisisKeywords = [
-      'kill myself', 'suicide', 'end my life', 'want to die', 
+      'kill myself', 'suicide', 'end my life', 'want to die',
       'self harm', 'hurt myself', 'cutting', 'worthless',
       "can't go on", "don't want to live", 'no reason to live'
     ];
-    return crisisKeywords.some(keyword => 
+    return crisisKeywords.some(keyword =>
       text.toLowerCase().includes(keyword)
     );
   };
 
   const handleSend = async (content) => {
-  const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
-  if (!token) {
-    window.location.href = "/Login";
-    return;
-  }
-
-  const userMessage = { role: "user", content };
-  const updatedMessages = [...messages, userMessage];
-
-  setMessages(updatedMessages);
-  setIsLoading(true);
-
-  if (detectCrisis(content)) {
-    setShowCrisisHelp(true);
-  }
-
-  try {
-    const response = await fetch("http://localhost:5000/api/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        message: content,
-        history: messages,
-      }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || "Unable to get a response.");
+    if (!token) {
+      window.location.href = "/Login";
+      return;
     }
 
-    setMessages((previous) => [
-      ...previous,
-      {
-        role: "assistant",
-        content: data.reply,
-      },
-    ]);
-  } catch (error) {
-    setMessages((previous) => [
-      ...previous,
-      {
-        role: "assistant",
-        content:
-          "I’m having trouble responding right now. Please try again in a moment.",
-      },
-    ]);
-  } finally {
-    setIsLoading(false);
-  }
-};
+    const userMessage = { role: "user", content };
+    const updatedMessages = [...messages, userMessage];
+
+    setMessages(updatedMessages);
+    setIsLoading(true);
+
+    if (detectCrisis(content)) {
+      setShowCrisisHelp(true);
+    }
+
+    try {
+      const response = await fetch("${API_BASE_URL}/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          message: content,
+          history: messages,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Unable to get a response.");
+      }
+
+      setMessages((previous) => [
+        ...previous,
+        {
+          role: "assistant",
+          content: data.reply,
+        },
+      ]);
+    } catch (error) {
+      setMessages((previous) => [
+        ...previous,
+        {
+          role: "assistant",
+          content:
+            "I’m having trouble responding right now. Please try again in a moment.",
+        },
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-teal-50 via-slate-50 to-violet-50">
       {/* Header */}
@@ -172,17 +173,17 @@ export default function Chat() {
                   If you're going through a really difficult time, talking to someone who can help might make things feel a bit lighter.
                 </p>
                 <div className="flex flex-wrap gap-2">
-                  <Button 
-                    size="sm" 
-                    variant="outline" 
+                  <Button
+                    size="sm"
+                    variant="outline"
                     className="border-rose-200 text-rose-700 hover:bg-rose-100"
                     onClick={() => window.open("tel:14416", "_self")}
                   >
                     <Phone className="w-3.5 h-3.5 mr-1.5" />
                     Tele-MANAS: 14416
                   </Button>
-                  <Button 
-                    size="sm" 
+                  <Button
+                    size="sm"
                     variant="ghost"
                     className="text-rose-600"
                     onClick={() => setShowCrisisHelp(false)}
@@ -204,10 +205,10 @@ export default function Chat() {
               <ChatMessage key={index} message={message} />
             ))}
             {isLoading && (
-              <ChatMessage 
-                key="typing" 
-                message={{ role: 'assistant', content: '' }} 
-                isTyping 
+              <ChatMessage
+                key="typing"
+                message={{ role: 'assistant', content: '' }}
+                isTyping
               />
             )}
           </AnimatePresence>
@@ -218,8 +219,8 @@ export default function Chat() {
       {/* Input */}
       <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-white via-white to-transparent pt-8 pb-6">
         <div className="max-w-4xl mx-auto px-6">
-          <ChatInput 
-            onSend={handleSend} 
+          <ChatInput
+            onSend={handleSend}
             isLoading={isLoading}
             placeholder="Share what's on your mind..."
           />

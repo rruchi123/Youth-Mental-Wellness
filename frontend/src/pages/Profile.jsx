@@ -15,8 +15,8 @@ import {
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import API_BASE_URL from "@/api";
 
-const API_BASE_URL = "http://localhost:5000/api";
 
 export default function Profile() {
   const navigate = useNavigate();

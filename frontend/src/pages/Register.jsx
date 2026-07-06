@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { User, Mail, Lock, Eye, EyeOff } from "lucide-react";
+import API_BASE_URL from "@/api";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ export default function Register() {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/register", {
+      const response = await fetch("${API_BASE_URL}/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -74,11 +75,10 @@ export default function Register() {
 
         {message && (
           <div
-            className={`mt-5 rounded-lg px-4 py-3 text-sm ${
-              isError
+            className={`mt-5 rounded-lg px-4 py-3 text-sm ${isError
                 ? "bg-red-50 text-red-600 border border-red-200"
                 : "bg-green-50 text-green-700 border border-green-200"
-            }`}
+              }`}
           >
             {message}
           </div>

@@ -31,6 +31,7 @@ import {
 import { formatDistanceToNow } from "date-fns";
 import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import API_BASE_URL from "@/api";
 
 export default function Community() {
   const navigate = useNavigate();
@@ -60,7 +61,7 @@ export default function Community() {
   const loadCommentCount = async (postId) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/community/posts/${postId}/comments`
+        `${API_BASE_URL}/community/posts/${postId}/comments`
       );
       const data = await response.json();
 
@@ -86,7 +87,7 @@ export default function Community() {
           : "";
 
       const response = await fetch(
-        `http://localhost:5000/api/community/posts${query}`
+        `${API_BASE_URL}/community/posts${query}`
       );
 
       const data = await response.json();
@@ -121,7 +122,7 @@ export default function Community() {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/community/posts/${post._id}/comments`
+        `${API_BASE_URL}/community/posts/${post._id}/comments`
       );
 
       const data = await response.json();
@@ -157,7 +158,7 @@ export default function Community() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/community/posts",
+        "${API_BASE_URL}/community/posts",
         {
           method: "POST",
           headers: {
@@ -207,7 +208,7 @@ export default function Community() {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/community/posts/${selectedPost._id}/comments`,
+        `${API_BASE_URL}/community/posts/${selectedPost._id}/comments`,
         {
           method: "POST",
           headers: {
@@ -230,7 +231,7 @@ export default function Community() {
       setNewComment("");
 
       const commentsResponse = await fetch(
-        `http://localhost:5000/api/community/posts/${selectedPost._id}/comments`
+        `${API_BASE_URL}/community/posts/${selectedPost._id}/comments`
       );
 
       const commentsData = await commentsResponse.json();
@@ -250,44 +251,44 @@ export default function Community() {
   };
 
   const handleReact = async (postId, reaction) => {
-  const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
-  if (!token) {
-    navigate("/Login");
-    return;
-  }
-
-  try {
-    const response = await fetch(
-      `http://localhost:5000/api/community/posts/${postId}/reactions`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ reaction }),
-      }
-    );
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      setError(data.message || "Unable to add reaction.");
+    if (!token) {
+      navigate("/Login");
       return;
     }
 
-    setPosts((previousPosts) =>
-      previousPosts.map((post) =>
-        post._id === postId
-          ? { ...post, reactions: data.reactions }
-          : post
-      )
-    );
-  } catch (error) {
-    setError("Unable to connect to the server. Please try again.");
-  }
-};
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/community/posts/${postId}/reactions`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ reaction }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.message || "Unable to add reaction.");
+        return;
+      }
+
+      setPosts((previousPosts) =>
+        previousPosts.map((post) =>
+          post._id === postId
+            ? { ...post, reactions: data.reactions }
+            : post
+        )
+      );
+    } catch (error) {
+      setError("Unable to connect to the server. Please try again.");
+    }
+  };
 
   const filteredPosts = posts.filter((post) => {
     const search = searchQuery.trim().toLowerCase();

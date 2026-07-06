@@ -16,6 +16,7 @@ import {
 import { format } from "date-fns";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import API_BASE_URL from "@/api";
 
 const activities = [
   { id: "exercise", emoji: "🏃", label: "Exercise" },
@@ -48,7 +49,7 @@ export default function MoodCheckIn() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/moods", {
+      const response = await fetch("${API_BASE_URL}/moods", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -80,19 +81,19 @@ export default function MoodCheckIn() {
     setError("");
 
     try {
-      const response = await fetch("http://localhost:5000/api/moods", {
+      const response = await fetch("${API_BASE_URL}/moods", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-  mood: selectedMood,
-  intensity,
-  activities: selectedActivities,
-  note: journalEntry,
-  journalType,
-}),
+          mood: selectedMood,
+          intensity,
+          activities: selectedActivities,
+          note: journalEntry,
+          journalType,
+        }),
       });
 
       const data = await response.json();
@@ -266,11 +267,10 @@ export default function MoodCheckIn() {
                     onClick={() => setIntensity(level)}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.95 }}
-                    className={`w-14 h-14 rounded-2xl font-semibold transition-all ${
-                      intensity === level
+                    className={`w-14 h-14 rounded-2xl font-semibold transition-all ${intensity === level
                         ? "bg-gradient-to-br from-teal-400 to-teal-500 text-white shadow-lg"
                         : "bg-white border-2 border-slate-100 text-slate-600 hover:border-slate-200"
-                    }`}
+                      }`}
                   >
                     {level}
                   </motion.button>
@@ -324,11 +324,10 @@ export default function MoodCheckIn() {
                     onClick={() => toggleActivity(activity.id)}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className={`p-4 rounded-2xl transition-all ${
-                      selectedActivities.includes(activity.id)
+                    className={`p-4 rounded-2xl transition-all ${selectedActivities.includes(activity.id)
                         ? "bg-teal-50 border-2 border-teal-200"
                         : "bg-white border-2 border-slate-100 hover:border-slate-200"
-                    }`}
+                      }`}
                   >
                     <span className="text-2xl mb-2 block">
                       {activity.emoji}
@@ -381,9 +380,8 @@ export default function MoodCheckIn() {
                 <Button
                   variant={journalType === "quick_note" ? "default" : "outline"}
                   onClick={() => setJournalType("quick_note")}
-                  className={`rounded-xl ${
-                    journalType === "quick_note" ? "bg-teal-500" : ""
-                  }`}
+                  className={`rounded-xl ${journalType === "quick_note" ? "bg-teal-500" : ""
+                    }`}
                 >
                   <Sparkles className="w-4 h-4 mr-2" />
                   Quick Note
@@ -392,9 +390,8 @@ export default function MoodCheckIn() {
                 <Button
                   variant={journalType === "reflection" ? "default" : "outline"}
                   onClick={() => setJournalType("reflection")}
-                  className={`rounded-xl ${
-                    journalType === "reflection" ? "bg-teal-500" : ""
-                  }`}
+                  className={`rounded-xl ${journalType === "reflection" ? "bg-teal-500" : ""
+                    }`}
                 >
                   <BookOpen className="w-4 h-4 mr-2" />
                   Reflection

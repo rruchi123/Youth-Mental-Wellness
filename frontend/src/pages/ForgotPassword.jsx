@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Mail, ArrowLeft } from "lucide-react";
+import API_BASE_URL from "@/api";
 
 export default function ForgotPassword() {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ export default function ForgotPassword() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/auth/forgot-password",
+        "${API_BASE_URL}/auth/forgot-password",
         {
           method: "POST",
           headers: {
@@ -74,11 +75,10 @@ export default function ForgotPassword() {
 
         {message && (
           <div
-            className={`mt-5 rounded-lg px-4 py-3 text-sm ${
-              isError
+            className={`mt-5 rounded-lg px-4 py-3 text-sm ${isError
                 ? "bg-red-50 text-red-600 border border-red-200"
                 : "bg-green-50 text-green-700 border border-green-200"
-            }`}
+              }`}
           >
             {message}
           </div>
