@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { base44 } from '@/api/base44Client';
 import ChatMessage from '@/components/chat/ChatMessage';
 import ChatInput from '@/components/chat/ChatInput';
 import { Bot, Sparkles, AlertCircle, Phone, ArrowLeft } from 'lucide-react';
@@ -67,37 +66,62 @@ export default function Chat() {
   };
 
   const handleSend = async (content) => {
-    const userMessage = { role: 'user', content };
-    setMessages(prev => [...prev, userMessage]);
-    setIsLoading(true);
+  const token = localStorage.getItem("token");
 
-    // Check for crisis language
-    if (detectCrisis(content)) {
-      setShowCrisisHelp(true);
-    }
+  if (!token) {
+    window.location.href = "/Login";
+    return;
+  }
 
-    const conversationHistory = messages.map(m => 
-      `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.content}`
-    ).join('\n');
+  const userMessage = { role: "user", content };
+  const updatedMessages = [...messages, userMessage];
 
-    const prompt = `${SYSTEM_PROMPT}
+  setMessages(updatedMessages);
+  setIsLoading(true);
 
-Previous conversation:
-${conversationHistory}
+  if (detectCrisis(content)) {
+    setShowCrisisHelp(true);
+  }
 
-User: ${content}
-
-Respond with empathy and warmth. Keep your response natural and conversational.`;
-
-    const response = await base44.integrations.Core.InvokeLLM({
-      prompt,
-      response_json_schema: null
+  try {
+    const response = await fetch("http://localhost:5000/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        message: content,
+        history: messages,
+      }),
     });
 
-    setMessages(prev => [...prev, { role: 'assistant', content: response }]);
-    setIsLoading(false);
-  };
+    const data = await response.json();
 
+    if (!response.ok) {
+      throw new Error(data.message || "Unable to get a response.");
+    }
+
+    setMessages((previous) => [
+      ...previous,
+      {
+        role: "assistant",
+        content: data.reply,
+      },
+    ]);
+  } catch (error) {
+    setMessages((previous) => [
+      ...previous,
+      {
+        role: "assistant",
+        content:
+          "I’m having trouble responding right now. Please try again in a moment.",
+      },
+    ]);
+  } finally {
+    setIsLoading(false);
+  }
+};
   return (
     <div className="min-h-screen bg-gradient-to-br from-teal-50 via-slate-50 to-violet-50">
       {/* Header */}
@@ -152,10 +176,10 @@ Respond with empathy and warmth. Keep your response natural and conversational.`
                     size="sm" 
                     variant="outline" 
                     className="border-rose-200 text-rose-700 hover:bg-rose-100"
-                    onClick={() => window.open('tel:988', '_blank')}
+                    onClick={() => window.open("tel:14416", "_self")}
                   >
                     <Phone className="w-3.5 h-3.5 mr-1.5" />
-                    Crisis Line: 988
+                    Tele-MANAS: 14416
                   </Button>
                   <Button 
                     size="sm" 

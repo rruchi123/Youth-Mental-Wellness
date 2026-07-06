@@ -55,6 +55,11 @@ import Experts from './pages/Experts';
 import MusicMood from './pages/MusicMood';
 import Profile from './pages/Profile';
 import __Layout from './Layout.jsx';
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+
 
 
 export const PAGES = {
@@ -65,6 +70,10 @@ export const PAGES = {
     "Experts": Experts,
     "MusicMood": MusicMood,
     "Profile": Profile,
+    "Login": Login,
+    "Register": Register,
+    "ForgotPassword": ForgotPassword,
+    "ResetPassword": ResetPassword,
 }
 
 export const pagesConfig = {

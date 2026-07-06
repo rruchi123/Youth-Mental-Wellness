@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { motion, AnimatePresence } from 'framer-motion';
-import { base44 } from '@/api/base44Client';
-import { 
-  Home, 
-  MessageCircle, 
-  Heart, 
-  Users, 
-  Calendar, 
-  Music, 
+import {
+  Home,
+  MessageCircle,
+  Heart,
+  Users,
+  Calendar,
+  Music,
   User,
   Menu,
   X,
@@ -32,16 +31,27 @@ export default function Layout({ children, currentPageName }) {
   const [user, setUser] = useState(null);
   const [isScrolled, setIsScrolled] = useState(false);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
-    const loadUser = async () => {
-      const isAuth = await base44.auth.isAuthenticated();
-      if (isAuth) {
-        const currentUser = await base44.auth.me();
-        setUser(currentUser);
-      }
-    };
-    loadUser();
-  }, []);
+  const loadUser = () => {
+    const savedUser = localStorage.getItem("user");
+
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    } else {
+      setUser(null);
+    }
+  };
+
+  loadUser();
+
+  window.addEventListener("authChanged", loadUser);
+
+  return () => {
+    window.removeEventListener("authChanged", loadUser);
+  };
+}, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -92,8 +102,8 @@ export default function Layout({ children, currentPageName }) {
                     variant="ghost"
                     className={cn(
                       "rounded-xl px-4",
-                      isActive 
-                        ? "bg-teal-50 text-teal-700" 
+                      isActive
+                        ? "bg-teal-50 text-teal-700"
                         : "text-slate-600 hover:text-slate-800 hover:bg-slate-100"
                     )}
                   >
@@ -111,12 +121,12 @@ export default function Layout({ children, currentPageName }) {
               <Link to={createPageUrl('Profile')}>
                 <Button variant="ghost" className="rounded-xl">
                   <User className="w-4 h-4 mr-2" />
-                  <span className="hidden sm:inline">{user.full_name || 'Profile'}</span>
+                  <span className="hidden sm:inline">{user.fullName || "Profile"}</span>
                 </Button>
               </Link>
             ) : (
-              <Button 
-                onClick={() => base44.auth.redirectToLogin()}
+              <Button
+                onClick={() => navigate("/Login")}
                 className="bg-gradient-to-r from-teal-500 to-teal-600 rounded-xl"
               >
                 Sign In
@@ -150,15 +160,15 @@ export default function Layout({ children, currentPageName }) {
                 const Icon = item.icon;
                 const isActive = currentPageName === item.page;
                 return (
-                  <Link 
-                    key={item.page} 
+                  <Link
+                    key={item.page}
                     to={createPageUrl(item.page)}
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <div className={cn(
                       "flex items-center gap-3 p-4 rounded-xl transition-colors",
-                      isActive 
-                        ? "bg-teal-50 text-teal-700" 
+                      isActive
+                        ? "bg-teal-50 text-teal-700"
                         : "text-slate-600 hover:bg-slate-50"
                     )}>
                       <Icon className="w-5 h-5" />
