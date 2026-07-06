@@ -19,7 +19,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import API_BASE_URL from "@/api";
 
-const API_URL = "${API_BASE_URL}/music";
+const API_URL = `${API_BASE_URL}/music`;
 
 export default function MusicMood() {
   const [songTitle, setSongTitle] = useState("");

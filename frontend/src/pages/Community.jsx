@@ -158,7 +158,7 @@ export default function Community() {
 
     try {
       const response = await fetch(
-        "${API_BASE_URL}/community/posts",
+        `${API_BASE_URL}/community/posts`,
         {
           method: "POST",
           headers: {

@@ -78,7 +78,7 @@ export default function Experts() {
     setError("");
 
     try {
-      const response = await fetch("${API_BASE_URL}/experts");
+      const response = await fetch(`${API_BASE_URL}/experts`);
       const data = await response.json();
 
       if (!response.ok) {
@@ -133,7 +133,7 @@ export default function Experts() {
 
     try {
       const response = await fetch(
-        "${API_BASE_URL}/experts/bookings",
+        `${API_BASE_URL}/experts/bookings`,
         {
           method: "POST",
           headers: {

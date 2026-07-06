@@ -49,7 +49,7 @@ export default function MoodCheckIn() {
     }
 
     try {
-      const response = await fetch("${API_BASE_URL}/moods", {
+      const response = await fetch(`${API_BASE_URL}/moods`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -81,7 +81,7 @@ export default function MoodCheckIn() {
     setError("");
 
     try {
-      const response = await fetch("${API_BASE_URL}/moods", {
+      const response = await fetch(`${API_BASE_URL}/moods`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
